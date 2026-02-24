@@ -1,19 +1,162 @@
-﻿<div class="footer-watermark">Desarrollado por Sergio Duarte</div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Calculadora FTTH - Sergio Duarte</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#005596">
+    <style>
+        :root {
+            --antel-blue: #005596;
+            --antel-yellow: #ffcb05;
+            --bg-color: #f4f7f9;
+        }
 
-<script>
-    // Tu lógica de cálculo se mantiene igual...
-    
-    // REGISTRO DEL SERVICE WORKER (PWA)
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').then(reg => {
-                console.log('App de Sergio Duarte: SW registrado');
-            }).catch(err => {
-                console.log('Error en SW', err);
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+            border-top: 5px solid var(--antel-blue);
+        }
+
+        h2 {
+            color: var(--antel-blue);
+            text-align: center;
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #444;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--antel-blue);
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--antel-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:active {
+            background-color: #003d6b;
+            transform: scale(0.98);
+        }
+
+        .result {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .pass { background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+        .footer-watermark {
+            margin-top: 30px;
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Calculadora FTTH</h2>
+        
+        <div class="input-group">
+            <label>Potencia Medida (dBm):</label>
+            <input type="number" id="potencia" step="0.01" placeholder="Ej: -22.5">
+        </div>
+
+        <button onclick="calcular()">CALCULAR ESTADO</button>
+
+        <div id="resultado" class="result"></div>
+    </div>
+
+    <div class="footer-watermark">Desarrollado por Sergio Duarte</div>
+
+    <script>
+        function calcular() {
+            const pot = parseFloat(document.getElementById('potencia').value);
+            const resDiv = document.getElementById('resultado');
+
+            if (isNaN(pot)) {
+                alert("Por favor, ingresa un valor válido.");
+                return;
+            }
+
+            resDiv.style.display = "block";
+            
+            // Umbral estándar para FTTH (Ejemplo: -27 dBm)
+            if (pot >= -27 && pot <= -14) {
+                resDiv.className = "result pass";
+                resDiv.innerHTML = `<strong>DENTRO DE RANGO</strong><br>Potencia: ${pot} dBm`;
+            } else {
+                resDiv.className = "result fail";
+                resDiv.innerHTML = `<strong>FUERA DE RANGO</strong><br>Potencia: ${pot} dBm`;
+            }
+        }
+
+        // REGISTRO DEL SERVICE WORKER PARA PWA
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.worker.register('./sw.js').then(reg => {
+                    console.log('PWA Sergio Duarte lista');
+                }).catch(err => {
+                    console.log('Error en registro de SW');
+                });
             });
-        });
-    }
-</script>
+        }
+    </script>
 </body>
 </html>
-
